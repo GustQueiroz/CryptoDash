@@ -16,7 +16,6 @@ export function useUser() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulando dados do usuário
     const mockUser: User = {
       id: "1",
       name: "João Silva",

@@ -1,17 +1,26 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
 
 export function ProfileHeader() {
+  const [userName, setUserName] = useState("Usuário");
+  const [avatarInitial, setAvatarInitial] = useState("U");
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("user") || "{}");
+    if (userData.name) {
+      setUserName(userData.name);
+      setAvatarInitial(userData.name.charAt(0).toUpperCase());
+    }
+  }, []);
+
   return (
     <div className="p-6 rounded-xl bg-[#0F1215] border border-gray-800 shadow-lg">
       <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
         <div className="relative">
-          <Image
-            src="/profile.jpg"
-            alt="Foto de perfil"
-            width={120}
-            height={120}
-            className="rounded-full border-4 border-blue-600"
-          />
+          <div className="w-30 h-30 flex items-center justify-center rounded-full border-4 border-blue-600 bg-gray-700 text-white text-3xl">
+            {avatarInitial}
+          </div>
           <button className="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full hover:bg-blue-700 transition-colors">
             <svg
               className="w-4 h-4 text-white"
@@ -36,10 +45,14 @@ export function ProfileHeader() {
         </div>
 
         <div className="flex-1 text-center md:text-left">
-          <h1 className="text-2xl font-bold text-white">Matheus Silva</h1>
-          <p className="text-gray-400 mt-1">@matheusdev</p>
+          <h1 className="text-2xl font-bold text-white">{userName}</h1>
+          <p className="text-gray-400 mt-1">
+            @{userName.split(" ")[0].toLowerCase()}
+            {userName.split(" ")[1].toLowerCase()}
+            crypto
+          </p>
           <p className="text-gray-400 mt-2">
-            Investidor desde 2021 • São Paulo, Brasil
+            Investidor desde 2025 • São Paulo, Brasil
           </p>
           <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-2">
             <span className="px-3 py-1 bg-blue-600/10 text-blue-500 rounded-full text-sm">

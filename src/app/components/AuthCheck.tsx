@@ -17,12 +17,10 @@ export default function AuthCheck({ children }: AuthCheckProps) {
     setIsClient(true);
   }, []);
 
-  // Verificar autenticação sempre que o componente for montado
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-  // Verificar autenticação a cada 1 segundo para detectar mudanças no localStorage
   useEffect(() => {
     const interval = setInterval(() => {
       checkAuth();

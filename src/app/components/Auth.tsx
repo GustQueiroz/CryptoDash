@@ -16,7 +16,6 @@ import { useAuth } from "../hooks/useAuth";
 export default function Auth() {
   const { login, checkAuth } = useAuth();
 
-  // Estado do formulário simplificado
   const [name, setName] = useState("");
   const [initialBalance, setInitialBalance] = useState("5000");
   const [error, setError] = useState("");
@@ -36,16 +35,14 @@ export default function Auth() {
       return;
     }
 
-    // Login fictício simplificado
     try {
       login({
         id: "user-" + Date.now(),
         name: name,
-        email: "usuario@exemplo.com", // Email fictício
+        email: "usuario@exemplo.com",
         initialBalance: balance,
       });
 
-      // Forçar verificação de autenticação após o login
       setTimeout(() => {
         checkAuth();
       }, 100);
@@ -133,7 +130,7 @@ export default function Auth() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start" sx={{ color: "white" }}>
-                      R$
+                      USD
                     </InputAdornment>
                   ),
                 }}

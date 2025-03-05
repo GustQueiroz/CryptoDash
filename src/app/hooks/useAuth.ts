@@ -1,14 +1,17 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useCryptoUpdater } from "./useCryptoUpdater";
 
 export interface Wallet {
-  balance: number; // Saldo em reais
+  totalBalance: number;
   assets: {
     [key: string]: {
       symbol: string;
       amount: number;
       purchaseValue: number;
+      atualValue: number;
+      balance: number;
     };
   };
 }
@@ -22,11 +25,11 @@ export interface User {
 }
 
 export function useAuth() {
+  const { cryptoData } = useCryptoUpdater();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Usar useCallback para evitar recriação da função em cada render
   const checkAuth = useCallback(() => {
     setLoading(true);
     try {
@@ -57,15 +60,39 @@ export function useAuth() {
     checkAuth();
   }, [checkAuth]);
 
+  const calculateBalance = (amount: number, atualValue: number) => {
+    return amount * atualValue;
+  };
+
+  const calculateTotalBalance = (assets: Wallet["assets"]) => {
+    return Object.values(assets).reduce((total, asset) => {
+      return total + asset.balance;
+    }, 0);
+  };
+
   const login = (
     userData: Omit<User, "isLoggedIn" | "wallet"> & { initialBalance: number }
   ) => {
+    const initialAtualValue = 1;
+    const initialBalance = calculateBalance(
+      userData.initialBalance,
+      initialAtualValue
+    );
+
     const newUser: User = {
       ...userData,
       isLoggedIn: true,
       wallet: {
-        balance: userData.initialBalance,
-        assets: {},
+        totalBalance: initialBalance,
+        assets: {
+          USDT: {
+            symbol: "USDT",
+            amount: userData.initialBalance,
+            purchaseValue: 1,
+            atualValue: initialAtualValue,
+            balance: initialBalance,
+          },
+        },
       },
     };
 
@@ -73,6 +100,51 @@ export function useAuth() {
     setUser(newUser);
     setIsAuthenticated(true);
     return newUser;
+  };
+
+  const updateAssetValues = useCallback(() => {
+    if (user && cryptoData?.cryptocurrencies) {
+      const updatedAssets = { ...user.wallet.assets };
+
+      Object.entries(updatedAssets).forEach(([symbol, asset]) => {
+        const crypto = cryptoData.cryptocurrencies.find(
+          (crypto) => crypto.symbol === symbol
+        );
+
+        if (crypto) {
+          const newAtualValue = crypto.current_price;
+          const newBalance = calculateBalance(asset.amount, newAtualValue);
+
+          updatedAssets[symbol] = {
+            ...asset,
+            atualValue: newAtualValue,
+            balance: newBalance,
+          };
+        }
+      });
+
+      const newTotalBalance = calculateTotalBalance(updatedAssets);
+
+      const updatedUser = {
+        ...user,
+        wallet: {
+          ...user.wallet,
+          assets: updatedAssets,
+          totalBalance: newTotalBalance,
+        },
+      };
+
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+    }
+  }, [user, cryptoData]);
+
+  useEffect(() => {
+    updateAssetValues();
+  }, [cryptoData, updateAssetValues]);
+
+  const getTotalBalance = () => {
+    return user?.wallet.totalBalance || 0;
   };
 
   const logout = () => {
@@ -84,130 +156,6 @@ export function useAuth() {
     setIsAuthenticated(false);
   };
 
-  const updateWallet = (newWallet: Wallet) => {
-    if (user) {
-      const updatedUser = { ...user, wallet: newWallet };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      setUser(updatedUser);
-      return updatedUser;
-    }
-    return null;
-  };
-
-  const buyCrypto = (symbol: string, amount: number, price: number) => {
-    if (!user) return null;
-
-    const totalCost = amount * price;
-
-    // Verificar se tem saldo suficiente
-    if (user.wallet.balance < totalCost) {
-      throw new Error("Saldo insuficiente");
-    }
-
-    const newWallet = { ...user.wallet };
-
-    // Atualizar saldo
-    newWallet.balance -= totalCost;
-
-    // Atualizar ou adicionar ativo
-    if (newWallet.assets[symbol]) {
-      const currentAsset = newWallet.assets[symbol];
-      const newAmount = currentAsset.amount + amount;
-      const newPurchaseValue =
-        (currentAsset.purchaseValue * currentAsset.amount + totalCost) /
-        newAmount;
-
-      newWallet.assets[symbol] = {
-        symbol,
-        amount: newAmount,
-        purchaseValue: newPurchaseValue,
-      };
-    } else {
-      newWallet.assets[symbol] = {
-        symbol,
-        amount,
-        purchaseValue: price,
-      };
-    }
-
-    return updateWallet(newWallet);
-  };
-
-  const sellCrypto = (symbol: string, amount: number, price: number) => {
-    if (!user) return null;
-
-    // Verificar se possui o ativo
-    if (
-      !user.wallet.assets[symbol] ||
-      user.wallet.assets[symbol].amount < amount
-    ) {
-      throw new Error("Quantidade insuficiente para venda");
-    }
-
-    const totalValue = amount * price;
-    const newWallet = { ...user.wallet };
-
-    // Atualizar saldo
-    newWallet.balance += totalValue;
-
-    // Atualizar ativo
-    const currentAsset = newWallet.assets[symbol];
-    const newAmount = currentAsset.amount - amount;
-
-    if (newAmount > 0) {
-      newWallet.assets[symbol] = {
-        ...currentAsset,
-        amount: newAmount,
-      };
-    } else {
-      // Remover ativo se quantidade for zero
-      delete newWallet.assets[symbol];
-    }
-
-    return updateWallet(newWallet);
-  };
-
-  const exchangeCrypto = (
-    fromSymbol: string,
-    toSymbol: string,
-    amount: number,
-    fromPrice: number,
-    toPrice: number
-  ) => {
-    if (!user) return null;
-
-    // Verificar se possui o ativo de origem
-    if (fromSymbol === "BRL") {
-      // Comprar com reais
-      if (user.wallet.balance < amount) {
-        throw new Error("Saldo insuficiente");
-      }
-
-      const cryptoAmount = amount / toPrice;
-      return buyCrypto(toSymbol, cryptoAmount, toPrice);
-    } else {
-      // Trocar entre criptomoedas
-      if (
-        !user.wallet.assets[fromSymbol] ||
-        user.wallet.assets[fromSymbol].amount < amount
-      ) {
-        throw new Error("Quantidade insuficiente para troca");
-      }
-
-      // Calcular valor em reais
-      const valueInBRL = amount * fromPrice;
-
-      // Calcular quantidade da nova cripto
-      const newCryptoAmount = valueInBRL / toPrice;
-
-      // Primeiro vender a cripto original
-      sellCrypto(fromSymbol, amount, fromPrice);
-
-      // Depois comprar a nova cripto
-      return buyCrypto(toSymbol, newCryptoAmount, toPrice);
-    }
-  };
-
   return {
     user,
     loading,
@@ -215,9 +163,6 @@ export function useAuth() {
     login,
     logout,
     checkAuth,
-    buyCrypto,
-    sellCrypto,
-    exchangeCrypto,
-    updateWallet,
+    getTotalBalance,
   };
 }

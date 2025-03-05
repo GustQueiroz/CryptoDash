@@ -71,7 +71,7 @@ export default function DashboardContent() {
           </Box>
         </Grid>
 
-        {cryptoData?.cryptocurrencies?.slice(0, 28).map((crypto) => (
+        {cryptoData?.cryptocurrencies?.slice(0, 30).map((crypto) => (
           <Grid item xs={12} sm={6} md={4} lg={4} key={crypto.id}>
             <CryptoCard crypto={crypto} />
           </Grid>

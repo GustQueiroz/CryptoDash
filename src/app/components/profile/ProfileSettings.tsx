@@ -33,18 +33,6 @@ export function ProfileSettings() {
         </div>
 
         <div>
-          <h3 className="text-sm font-medium text-gray-400 mb-3">Segurança</h3>
-          <div className="space-y-3">
-            <button className="w-full px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
-              Alterar senha
-            </button>
-            <button className="w-full px-4 py-2 text-sm text-white bg-blue-600/10 rounded-lg hover:bg-blue-600/20 transition-colors">
-              Ativar 2FA
-            </button>
-          </div>
-        </div>
-
-        <div>
           <h3 className="text-sm font-medium text-gray-400 mb-3">
             Preferências
           </h3>

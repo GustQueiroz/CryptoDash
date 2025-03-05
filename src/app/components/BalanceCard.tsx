@@ -5,21 +5,39 @@ import { useAuth } from "../hooks/useAuth";
 import { useEffect, useState } from "react";
 
 export default function BalanceCard() {
-  const { user } = useAuth();
+  const { user, getTotalBalance } = useAuth();
   const [totalBalance, setTotalBalance] = useState(0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [dayChange, setDayChange] = useState(2.5); // Valor fixo para exemplo
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [profit30d, setProfit30d] = useState(1245.0); // Valor fixo para exemplo
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [totalProfit, setTotalProfit] = useState(5432.0); // Valor fixo para exemplo
+  const [profitPercentage, setProfitPercentage] = useState(0);
+  const [totalProfit, setTotalProfit] = useState(0);
 
   useEffect(() => {
     if (user) {
-      const cryptoValue = 0;
-      setTotalBalance(user.wallet.balance + cryptoValue);
+      const currentBalance = getTotalBalance();
+      setTotalBalance(currentBalance);
+
+      // Calcular a porcentagem de lucro/perda e o lucro total
+      const initialBalance = user.wallet.assets.USDT.amount; // Valor inicial investido
+      const percentageChange =
+        ((currentBalance - initialBalance) / initialBalance) * 100;
+      const profitValue = currentBalance - initialBalance;
+
+      setProfitPercentage(percentageChange);
+      setTotalProfit(profitValue);
     }
-  }, [user]);
+  }, [user, getTotalBalance]);
+
+  // Função para determinar a cor baseada no valor
+  const getProfitColor = (value: number) => {
+    if (value > 0) return "#4CAF50"; // Verde para lucro
+    if (value < 0) return "#FF4444"; // Vermelho para perda
+    return "#8BC34A"; // Verde mais claro para valor igual
+  };
+
+  // Função para formatar a porcentagem
+  const formatPercentage = (percentage: number) => {
+    const prefix = percentage > 0 ? "+" : "";
+    return `${prefix}${percentage.toFixed(2)}%`;
+  };
 
   return (
     <Card
@@ -49,7 +67,7 @@ export default function BalanceCard() {
             Saldo Total
           </Typography>
           <Typography variant="caption" sx={{ color: "#FFFFFF", opacity: 0.7 }}>
-            Atualizado há 2 min
+            Atualizado agora
           </Typography>
         </div>
 
@@ -57,13 +75,26 @@ export default function BalanceCard() {
           <Typography
             variant="h4"
             component="div"
-            sx={{ fontWeight: "bold", color: "#FFFFFF", marginBottom: "8px" }}
+            sx={{ fontWeight: "bold", color: "#FFFFFF", marginBottom: "4px" }}
           >
             R${" "}
-            {totalBalance.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+            {(totalBalance * 5.8).toLocaleString("pt-BR", {
+              minimumFractionDigits: 2,
+            })}
           </Typography>
-          <Typography variant="body2" sx={{ color: "#4CAF50" }}>
-            +{dayChange}% nas últimas 24h
+          <Typography
+            variant="body2"
+            sx={{ color: "#9E9E9E", marginBottom: "8px" }}
+          >
+            ${" "}
+            {totalBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}{" "}
+            USD
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ color: getProfitColor(profitPercentage) }}
+          >
+            {formatPercentage(profitPercentage)} nas últimas 24h
           </Typography>
         </div>
 
@@ -75,9 +106,11 @@ export default function BalanceCard() {
             >
               Lucro 30 dias
             </Typography>
-            <Typography variant="body1" sx={{ color: "#4CAF50" }}>
-              + R${" "}
-              {profit30d.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+            <Typography
+              variant="body1"
+              sx={{ color: getProfitColor(profitPercentage) }}
+            >
+              {formatPercentage(profitPercentage)}
             </Typography>
           </div>
           <div>
@@ -87,10 +120,14 @@ export default function BalanceCard() {
             >
               Lucro Total
             </Typography>
-            <Typography variant="body1" sx={{ color: "#4CAF50" }}>
-              + R${" "}
-              {totalProfit.toLocaleString("pt-BR", {
-                minimumFractionDigits: 2,
+            <Typography
+              variant="body1"
+              sx={{ color: getProfitColor(totalProfit) }}
+            >
+              {totalProfit > 0 ? "+" : ""}${" "}
+              {totalProfit.toLocaleString("en-US", {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 2,
               })}
             </Typography>
           </div>

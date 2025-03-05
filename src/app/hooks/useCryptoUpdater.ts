@@ -4,14 +4,13 @@ import { useState, useEffect } from "react";
 import { cryptoData } from "../mock/cryptoData";
 import { Crypto } from "../components/CryptoCard";
 
-// Função para gerar uma variação aleatória entre -1% e +1% com 50% de chance de não alterar
 const getRandomVariation = () => {
-  // 50% de chance de retornar 0 (sem alteração)
+  // 50% de chance de não alterar
   if (Math.random() < 0.5) {
     return 0;
   }
 
-  // Caso contrário, gera um número entre -0.01 e 0.01 (ou seja, -1% a +1%)
+  // Alteração entre -1% e +1%
   return Math.random() * 0.02 - 0.01;
 };
 
@@ -20,13 +19,13 @@ export function useCryptoUpdater() {
   const [lastUpdateTime, setLastUpdateTime] = useState<Date | null>(null);
 
   useEffect(() => {
-    // Função para atualizar os valores das criptomoedas
+    // Atualiza os valores das criptomoedas
     const updateCryptoValues = () => {
       console.log("Atualizando valores...");
       const now = new Date();
 
       setUpdatedCryptoData((prevData) => {
-        // Cria uma cópia profunda dos dados para não modificar o original diretamente
+        // Copia os dados para não modificar o original
         const newData = JSON.parse(JSON.stringify(prevData));
         // Atualiza todas as criptomoedas
         newData.cryptocurrencies = newData.cryptocurrencies.map(
@@ -35,7 +34,6 @@ export function useCryptoUpdater() {
             // Cada moeda terá sua própria chance de 50% de não mudar
             const priceVariation = getRandomVariation();
             const marketCapVariation = getRandomVariation();
-            // Se não houver variação, retorna o objeto sem alterações
             if (priceVariation === 0 && marketCapVariation === 0) {
               return crypto;
             }
@@ -43,7 +41,7 @@ export function useCryptoUpdater() {
             const newPrice = crypto.current_price * (1 + priceVariation);
             const newMarketCap = crypto.market_cap * (1 + marketCapVariation);
 
-            // Atualiza a variação de preço em 24h apenas se houver variação de preço
+            // Atualiza a variação de preço em 24h apenas se houver variação no preço
             const newPriceChange =
               priceVariation === 0
                 ? crypto.price_change_24h
@@ -62,14 +60,13 @@ export function useCryptoUpdater() {
           }
         );
 
-        // Atualiza os top gainers e losers com base nos novos valores
+        // Atualiza os top gainers e losers com os novos valores
         newData.top_gainers = [...newData.cryptocurrencies]
           .sort((a, b) => b.price_change_24h - a.price_change_24h)
           .slice(0, 5);
         newData.top_losers = [...newData.cryptocurrencies]
           .sort((a, b) => a.price_change_24h - b.price_change_24h)
           .slice(0, 5);
-        // Atualiza os dados de mercado
         newData.marketData = {
           ...newData.marketData,
           total_market_cap: newData.cryptocurrencies.reduce(
@@ -94,13 +91,12 @@ export function useCryptoUpdater() {
 
       setLastUpdateTime(now);
     };
-    // Executa a atualização imediatamente na primeira vez
     updateCryptoValues();
-    // Configura o intervalo para atualizar a cada 5 segundos (5000 ms)
-    const intervalId = setInterval(updateCryptoValues, 5000);
+    //Intervalo para atualizar a cada 1 segundos
+    const intervalId = setInterval(updateCryptoValues, 1000);
     // Limpa o intervalo quando o componente é desmontado
     return () => clearInterval(intervalId);
-  }, []); // Sem dependências para evitar recriação do efeito
+  }, []);
 
   return { cryptoData: updatedCryptoData, lastUpdateTime };
 }
