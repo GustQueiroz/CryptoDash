@@ -1,12 +1,17 @@
 "use client";
 
 import React from "react";
-
 import { AppBar, Toolbar, Typography, Box, Avatar } from "@mui/material";
 import { useAuth } from "../hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { user } = useAuth();
+  const router = useRouter();
+
+  const handleProfileClick = () => {
+    router.push("/profile");
+  };
 
   return (
     <AppBar
@@ -40,16 +45,19 @@ export default function Navbar() {
             sx={{ display: "flex", alignItems: "center", marginRight: "20px" }}
           >
             <Avatar
+              onClick={handleProfileClick}
               sx={{
                 width: 32,
                 height: 32,
-                bgcolor: "#4311b8 ",
+                bgcolor: "#4311b8",
                 fontSize: "0.875rem",
                 cursor: "pointer",
                 fontWeight: "bold",
-                hover: {
+                transition: "all 0.2s ease-in-out",
+                "&:hover": {
                   bgcolor: "#431e97",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  transform: "scale(1.05)",
+                  boxShadow: "0 0 10px rgba(67, 30, 151, 0.5)",
                 },
               }}
             >
