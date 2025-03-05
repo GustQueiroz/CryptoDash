@@ -1,9 +1,7 @@
 import axios from "axios";
 
-// URL base da API CoinGecko
 const API_BASE_URL = "https://api.coingecko.com/api/v3";
 
-// Função para obter preço de uma criptomoeda específica
 export async function getCryptoPrice(cryptoId: string): Promise<number> {
   try {
     const response = await axios.get(`${API_BASE_URL}/simple/price`, {
@@ -20,7 +18,6 @@ export async function getCryptoPrice(cryptoId: string): Promise<number> {
   }
 }
 
-// Função para obter dados detalhados de várias criptomoedas
 export async function getTopCryptos(limit: number = 100): Promise<any[]> {
   try {
     const response = await axios.get(`${API_BASE_URL}/coins/markets`, {
@@ -41,7 +38,6 @@ export async function getTopCryptos(limit: number = 100): Promise<any[]> {
   }
 }
 
-// Função para obter histórico de preços de uma criptomoeda
 export async function getCryptoHistory(
   cryptoId: string,
   days: number = 7
@@ -65,7 +61,6 @@ export async function getCryptoHistory(
   }
 }
 
-// Função para buscar detalhes de uma criptomoeda específica
 export async function getCryptoDetails(cryptoId: string): Promise<any> {
   try {
     const response = await axios.get(`${API_BASE_URL}/coins/${cryptoId}`, {

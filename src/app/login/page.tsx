@@ -27,7 +27,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
 
-  // Redirecionamento quando autenticado
   useEffect(() => {
     if (isAuthenticated || loginSuccess) {
       console.log("Usuário autenticado, redirecionando para página inicial...");
@@ -49,17 +48,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // Chamar o serviço de login
       const response = await authService.login(formData);
       console.log("Login bem-sucedido:", response);
 
-      // Salvar dados de autenticação no store
       setAuth(response.token, response.user);
 
-      // Marcar login como bem-sucedido
       setLoginSuccess(true);
 
-      // Forçar redirecionamento imediato
       setTimeout(() => {
         router.push("/");
       }, 100);

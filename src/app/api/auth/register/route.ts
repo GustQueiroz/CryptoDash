@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import jwt from "jsonwebtoken";
 
-// Schema de validação para o registro
 const registerSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   email: z.string().email("Email inválido"),
@@ -15,7 +14,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Validar dados de entrada
     const result = registerSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
@@ -29,7 +27,6 @@ export async function POST(request: NextRequest) {
 
     const { name, email, password } = result.data;
 
-    // Verificar se o email já está em uso
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -41,10 +38,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Hash da senha
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // Criar usuário
     const user = await prisma.user.create({
       data: {
         name,
@@ -55,7 +50,6 @@ export async function POST(request: NextRequest) {
             balances: {
               create: [
                 {
-                  // Criar saldo inicial em BRL (assumindo que BRL é um asset existente)
                   asset: {
                     connectOrCreate: {
                       where: { symbol: "BRL" },
@@ -69,7 +63,6 @@ export async function POST(request: NextRequest) {
                   amount: 0,
                 },
                 {
-                  // Criar saldo inicial em USDT
                   asset: {
                     connectOrCreate: {
                       where: { symbol: "USDT" },
@@ -94,14 +87,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Gerar token JWT
     const token = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET || "fallback_secret_not_for_production",
       { expiresIn: "7d" }
     );
 
-    // Retornar resposta de sucesso
     return NextResponse.json({
       message: "Usuário registrado com sucesso",
       token,

@@ -34,7 +34,6 @@ export default function RegisterPage() {
       [name]: value,
     }));
 
-    // Limpar erros do campo quando o usuário digita
     if (formErrors[name]) {
       setFormErrors((prev) => {
         const newErrors = { ...prev };
@@ -75,7 +74,6 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
 
-    // Validar formulário antes de enviar
     if (!validateForm()) {
       return;
     }
@@ -83,25 +81,20 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      // Chamar o serviço de registro
       const { confirmPassword, ...registerData } = formData;
       const response = await authService.register(registerData);
       console.log("Registro bem-sucedido:", response);
 
-      // Salvar dados de autenticação no store
       setAuth(response.token, response.user);
 
-      // Redirecionar para a página inicial
       router.push("/");
     } catch (err: unknown) {
       console.error("Erro de registro:", err);
       const axiosError = err as AxiosError<ErrorResponse>;
 
       if (axiosError.response?.data?.errors) {
-        // Erros de validação específicos de campos
         setFormErrors(axiosError.response.data.errors || {});
       } else {
-        // Erro geral
         setError(
           axiosError.response?.data?.message || "Ocorreu um erro ao registrar"
         );

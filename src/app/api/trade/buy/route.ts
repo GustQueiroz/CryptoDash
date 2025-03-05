@@ -4,7 +4,6 @@ import { verifyAuth } from "@/app/lib/auth";
 import { z } from "zod";
 import { getCryptoPrice } from "@/app/lib/crypto";
 
-// Schema de validação para compra
 const buySchema = z.object({
   cryptoId: z.string().min(1, "ID da criptomoeda é obrigatório"),
   symbol: z.string().min(1, "Símbolo da criptomoeda é obrigatório"),
@@ -15,7 +14,6 @@ const buySchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    // Verificar autenticação
     const authResult = await verifyAuth(request);
     if (!authResult.success) {
       return NextResponse.json(
@@ -27,7 +25,6 @@ export async function POST(request: NextRequest) {
     const userId = authResult.userId;
     const body = await request.json();
 
-    // Validar dados de entrada
     const validation = buySchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
@@ -39,7 +36,6 @@ export async function POST(request: NextRequest) {
     const { cryptoId, symbol, name, amount, price } = validation.data;
     const totalValue = price * amount;
 
-    // Verificar preço atual para garantir que não houve mudança significativa
     const currentPrice = await getCryptoPrice(cryptoId);
 
     if (Math.abs((currentPrice - price) / price) > 0.01) {
@@ -49,7 +45,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Buscar carteira do usuário
     const wallet = await prisma.wallet.findUnique({
       where: { userId },
       include: {
@@ -64,7 +59,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verificar se tem USDT suficiente
     const usdt = wallet.assets.find((asset) => asset.symbol === "USDT");
     if (!usdt || usdt.amount < totalValue) {
       return NextResponse.json(
@@ -73,9 +67,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Executar a transação
     const result = await prisma.$transaction(async (tx) => {
-      // Reduzir saldo de USDT
       await tx.asset.update({
         where: { id: usdt.id },
         data: {
@@ -84,13 +76,11 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // Verificar se já possui esse ativo
       const existingAsset = wallet.assets.find(
         (asset) => asset.symbol === symbol
       );
 
       if (existingAsset) {
-        // Atualizar ativo existente
         const newTotalAmount = existingAsset.amount + amount;
         const newAveragePrice =
           (existingAsset.amount * existingAsset.purchasePrice +
@@ -107,7 +97,6 @@ export async function POST(request: NextRequest) {
           },
         });
       } else {
-        // Criar novo ativo
         await tx.asset.create({
           data: {
             walletId: wallet.id,
@@ -122,7 +111,6 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Registrar transação
       await tx.transaction.create({
         data: {
           userId,
@@ -135,7 +123,6 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // Atualizar saldo total da carteira
       const newBalance = await tx.asset.aggregate({
         where: { walletId: wallet.id },
         _sum: { totalValue: true },
@@ -148,7 +135,6 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // Buscar carteira atualizada
       return await tx.wallet.findUnique({
         where: { id: wallet.id },
         include: {

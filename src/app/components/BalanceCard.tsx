@@ -15,7 +15,6 @@ export default function BalanceCard() {
     ([symbol]) => symbol !== "USDT"
   );
 
-  // Calcula o lucro/prejuízo total
   const calculateTotalProfit = () => {
     let totalProfit = 0;
     assets.forEach(([symbol, asset]) => {

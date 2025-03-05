@@ -10,7 +10,7 @@ interface JwtPayload {
 export async function GET() {
   try {
     const headersList = headers();
-    const authorization = headersList.get("authorization");
+    const authorization = (await headersList).get("authorization");
 
     if (!authorization || !authorization.startsWith("Bearer ")) {
       return NextResponse.json(
@@ -21,7 +21,6 @@ export async function GET() {
 
     const token = authorization.split(" ")[1];
 
-    // Verificar token
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET || "fallback_secret_not_for_production"
@@ -31,7 +30,6 @@ export async function GET() {
       return NextResponse.json({ message: "Token inválido" }, { status: 401 });
     }
 
-    // Buscar usuário pelo ID
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
       select: {
@@ -48,10 +46,9 @@ export async function GET() {
       );
     }
 
-    // Retornar dados do usuário
     return NextResponse.json({
       user,
-      token, // devolver o mesmo token para que o cliente possa atualizar se necessário
+      token,
     });
   } catch (error) {
     console.error("Erro ao verificar token:", error);

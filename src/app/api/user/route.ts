@@ -4,7 +4,6 @@ import { verifyAuth } from "@/app/lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
-    // Verificar autenticação
     const authResult = await verifyAuth(request);
     if (!authResult.success) {
       return NextResponse.json(
@@ -15,7 +14,6 @@ export async function GET(request: NextRequest) {
 
     const userId = authResult.userId;
 
-    // Buscar dados do usuário
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -35,7 +33,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Remover dados sensíveis
     const { passwordHash, ...userData } = user;
 
     return NextResponse.json(userData);

@@ -4,14 +4,12 @@ import { useState, useEffect } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 
 export default function LoadingScreen() {
-  // Este estado é usado para garantir que o componente seja renderizado apenas no cliente
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // No servidor, retorna um div vazio para evitar hidratação incorreta
   if (!isMounted) {
     return (
       <div className="h-screen w-full flex items-center justify-center">
@@ -20,7 +18,6 @@ export default function LoadingScreen() {
     );
   }
 
-  // No cliente, renderiza o componente Material UI
   return (
     <Box
       sx={{

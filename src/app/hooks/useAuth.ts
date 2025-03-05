@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 
-// Função simples para gerar um ID aleatório
 function generateId(): string {
   return (
     Math.random().toString(36).substring(2, 15) +
@@ -116,7 +115,6 @@ export function useAuth() {
 
     const updatedUser = JSON.parse(JSON.stringify(user));
 
-    // Atualizar ou adicionar o ativo
     if (updatedUser.wallet.assets[symbol]) {
       updatedUser.wallet.assets[symbol].amount += amount;
       updatedUser.wallet.assets[symbol].atualValue = currentPrice;
@@ -132,7 +130,6 @@ export function useAuth() {
       };
     }
 
-    // Recalcular o saldo total com tipagem correta
     const assetsArray = Object.values(updatedUser.wallet.assets) as Asset[];
     updatedUser.wallet.totalBalance = assetsArray.reduce(
       (total, asset) => total + asset.balance,

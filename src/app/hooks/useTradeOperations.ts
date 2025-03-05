@@ -92,10 +92,8 @@ export function useTradeOperations() {
         };
       }
 
-      // Atualiza o saldo de USDT
       await checkAuth();
 
-      // Deduz o USDT e adiciona a criptomoeda
       const updatedUser = JSON.parse(JSON.stringify(user));
       updatedUser.wallet.assets.USDT.amount -= calculation.totalCost;
 
@@ -117,7 +115,6 @@ export function useTradeOperations() {
         };
       }
 
-      // Recalcula o saldo total
       const assetsArray = Object.values(updatedUser.wallet.assets);
       updatedUser.wallet.totalBalance = assetsArray.reduce(
         (total: any, asset: any) => total + asset.balance,

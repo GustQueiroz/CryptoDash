@@ -82,6 +82,7 @@ const useAuthStore = create<AuthState>()(
 
 export const checkIsAuthenticated = () => {
   const state = useAuthStore.getState();
+  console.log("aaaa", state);
   console.log("Verificando autenticação:", state);
   if (state.isAuthenticated && state.token && state.user) {
     return true;
