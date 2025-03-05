@@ -21,7 +21,6 @@ export function useCryptoUpdater() {
   useEffect(() => {
     // Atualiza os valores das criptomoedas
     const updateCryptoValues = () => {
-      console.log("Atualizando valores...");
       const now = new Date();
 
       setUpdatedCryptoData((prevData) => {
@@ -37,11 +36,8 @@ export function useCryptoUpdater() {
             if (priceVariation === 0 && marketCapVariation === 0) {
               return crypto;
             }
-            // Calcula novos valores
             const newPrice = crypto.current_price * (1 + priceVariation);
             const newMarketCap = crypto.market_cap * (1 + marketCapVariation);
-
-            // Atualiza a variação de preço em 24h apenas se houver variação no preço
             const newPriceChange =
               priceVariation === 0
                 ? crypto.price_change_24h
@@ -92,9 +88,8 @@ export function useCryptoUpdater() {
       setLastUpdateTime(now);
     };
     updateCryptoValues();
-    //Intervalo para atualizar a cada 1 segundos
-    const intervalId = setInterval(updateCryptoValues, 1000);
-    // Limpa o intervalo quando o componente é desmontado
+    //Intervalo para atualizar a cada 20 segundos
+    const intervalId = setInterval(updateCryptoValues, 20000);
     return () => clearInterval(intervalId);
   }, []);
 

@@ -30,19 +30,13 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const checkAuth = useCallback(() => {
-    setLoading(true);
+  const checkAuth = useCallback(async () => {
     try {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        if (parsedUser.isLoggedIn) {
-          setUser(parsedUser);
-          setIsAuthenticated(true);
-        } else {
-          setUser(null);
-          setIsAuthenticated(false);
-        }
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        const parsedUser = JSON.parse(userData);
+        setUser(parsedUser);
+        setIsAuthenticated(true);
       } else {
         setUser(null);
         setIsAuthenticated(false);
