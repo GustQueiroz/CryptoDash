@@ -25,7 +25,7 @@ export default function BalanceCard() {
         color: "white",
         borderRadius: "12px",
         width: "100%",
-        height: "100%",
+
         maxWidth: "400px",
         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         border: "1px solid rgba(255, 255, 255, 0.1)",

@@ -11,7 +11,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { Crypto } from "./CryptoCard";
-
+import Image from "next/image";
 export interface TopMoversProps {
   title?: string;
   cryptos: Crypto[];
@@ -81,6 +81,13 @@ export default function TopMovers({ title, cryptos, emoji }: TopMoversProps) {
                       }}
                     >
                       <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Image
+                          src={crypto.image}
+                          alt={crypto.name}
+                          width={24}
+                          height={24}
+                          style={{ borderRadius: "50%", marginRight: "20px" }}
+                        />
                         <Typography variant="body1" color="white">
                           {crypto.name}
                         </Typography>

@@ -11,7 +11,12 @@ export default function Navbar() {
   return (
     <AppBar
       position="static"
-      sx={{ backgroundColor: "#0A0A0A", boxShadow: "none", mb: 2 }}
+      sx={{
+        backgroundColor: "#111111",
+        boxShadow: "none",
+        mb: 2,
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+      }}
     >
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -31,7 +36,20 @@ export default function Navbar() {
         </Box>
 
         {user && (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box
+            sx={{ display: "flex", alignItems: "center", marginRight: "20px" }}
+          >
+            <Typography
+              variant="body2"
+              sx={{
+                ml: 1,
+                marginRight: "10px",
+                fontWeight: "bold",
+                color: "linear-gradient(45deg, #4311b8 30%, #c221f3 90%)",
+              }}
+            >
+              {user.name}
+            </Typography>
             <Avatar
               sx={{
                 width: 32,
@@ -43,15 +61,6 @@ export default function Navbar() {
             >
               {user.name.charAt(0).toUpperCase()}
             </Avatar>
-            <Typography
-              variant="body2"
-              sx={{
-                ml: 1,
-                color: "linear-gradient(45deg, #4311b8 30%, #c221f3 90%)",
-              }}
-            >
-              {user.name}
-            </Typography>
           </Box>
         )}
       </Toolbar>

@@ -78,7 +78,7 @@ export default function CryptoCard({ crypto }: CryptoCardProps) {
             Preço
           </Typography>
           <Typography variant="h6" color="white">
-            R$ {crypto.current_price.toLocaleString("pt-BR")}
+            USD {crypto.current_price.toLocaleString("pt-BR")}
           </Typography>
         </Box>
 
