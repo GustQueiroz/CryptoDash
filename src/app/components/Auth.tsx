@@ -1,94 +1,189 @@
+"use client";
+
 import { useState } from "react";
-import Image from "next/image";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  TextField,
+  Typography,
+  InputAdornment,
+} from "@mui/material";
+import { useAuth } from "../hooks/useAuth";
 
-interface User {
-  name: string;
-  balance: number;
-  image?: string;
-}
+export default function Auth() {
+  const { login, checkAuth } = useAuth();
 
-export default function Auth({ onLogin }: { onLogin: (user: User) => void }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    balance: "",
-  });
+  // Estado do formulário simplificado
+  const [name, setName] = useState("");
+  const [initialBalance, setInitialBalance] = useState("5000");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.balance) return;
+    setError("");
 
-    const user: User = {
-      name: formData.name,
-      balance: parseFloat(formData.balance),
-    };
+    if (!name) {
+      setError("Digite seu nome");
+      return;
+    }
 
-    localStorage.setItem("cryptoUser", JSON.stringify(user));
-    onLogin(user);
+    const balance = parseFloat(initialBalance);
+    if (isNaN(balance) || balance <= 0) {
+      setError("Saldo inicial inválido");
+      return;
+    }
+
+    // Login fictício simplificado
+    try {
+      login({
+        id: "user-" + Date.now(),
+        name: name,
+        email: "usuario@exemplo.com", // Email fictício
+        initialBalance: balance,
+      });
+
+      // Forçar verificação de autenticação após o login
+      setTimeout(() => {
+        checkAuth();
+      }, 100);
+    } catch {
+      setError("Erro ao entrar");
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-96">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            Bem-vindo ao CryptoTracker
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Por favor, insira seus dados para começar
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
-              Seu Nome
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              placeholder="Digite seu nome"
-              required
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="balance"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
-              Saldo Inicial (USD)
-            </label>
-            <input
-              type="number"
-              id="balance"
-              value={formData.balance}
-              onChange={(e) =>
-                setFormData({ ...formData, balance: e.target.value })
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              placeholder="Digite seu saldo inicial"
-              min="0"
-              step="0.01"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200"
+    <Container
+      maxWidth="sm"
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+      }}
+    >
+      <Card
+        sx={{
+          width: "100%",
+          backgroundColor: "#1A1A1A",
+          color: "white",
+          borderRadius: "12px",
+          boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+        }}
+      >
+        <CardContent>
+          <Typography
+            variant="h4"
+            component="div"
+            sx={{
+              textAlign: "center",
+              mb: 3,
+              background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              fontWeight: "bold",
+            }}
           >
-            Começar a Investir
-          </button>
-        </form>
-      </div>
-    </div>
+            CryptoDash
+          </Typography>
+
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h6" sx={{ mb: 3, textAlign: "center" }}>
+              Entre para começar
+            </Typography>
+            <form onSubmit={handleLogin}>
+              <TextField
+                label="Nome Completo"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    color: "white",
+                    "& fieldset": {
+                      borderColor: "rgba(255, 255, 255, 0.3)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "rgba(255, 255, 255, 0.5)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#2196F3",
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "rgba(255, 255, 255, 0.7)",
+                  },
+                  "& .Mui-focused": {
+                    color: "#2196F3",
+                  },
+                }}
+              />
+              <TextField
+                label="Saldo Inicial"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                value={initialBalance}
+                onChange={(e) => setInitialBalance(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start" sx={{ color: "white" }}>
+                      R$
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    color: "white",
+                    "& fieldset": {
+                      borderColor: "rgba(255, 255, 255, 0.3)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "rgba(255, 255, 255, 0.5)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#2196F3",
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "rgba(255, 255, 255, 0.7)",
+                  },
+                  "& .Mui-focused": {
+                    color: "#2196F3",
+                  },
+                }}
+              />
+              {error && (
+                <Typography color="error" sx={{ mt: 1 }}>
+                  {error}
+                </Typography>
+              )}
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                sx={{
+                  mt: 3,
+                  mb: 2,
+                  background:
+                    "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
+                  color: "white",
+                  fontWeight: "bold",
+                  padding: "12px",
+                  fontSize: "1rem",
+                }}
+              >
+                Entrar
+              </Button>
+            </form>
+          </Box>
+        </CardContent>
+      </Card>
+    </Container>
   );
 }
