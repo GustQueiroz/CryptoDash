@@ -1,48 +1,101 @@
-# CryptoDash
+# CryptoDash - Plataforma de Negociação de Criptomoedas
 
-O **CryptoDash** é um aplicativo de dashboard de criptomoedas que permite aos usuários visualizar informações sobre várias criptomoedas, incluindo preços, capitalização de mercado e volume de negociação. O sistema também permite que os usuários comprem, vendam e troquem criptomoedas, além de gerenciar seu saldo.
+Uma plataforma de negociação de criptomoedas fictícia construída com Next.js, Prisma e PostgreSQL.
 
 ## Funcionalidades
 
-- **Visualização de Criptomoedas**: Acompanhe o preço, capitalização de mercado e volume de negociação de diversas criptomoedas.
-- **Top Gainers e Losers**: Veja quais criptomoedas tiveram as maiores variações de preço nas últimas 24 horas.
-- **Gerenciamento de Saldo**: Os usuários podem gerenciar seu saldo e realizar transações de compra e venda de criptomoedas.
-- **Atualizações em Tempo Real**: Os dados das criptomoedas são atualizados a cada 5 segundos, proporcionando uma experiência dinâmica.
+- Autenticação de usuários
+- Carteira de criptomoedas
+- Compra e venda de criptomoedas
+- Histórico de transações
+- Favoritos
+- Depósitos de USDT
+- Integração com a API CoinGecko para dados em tempo real
 
-## Como Funciona o Algoritmo
+## Requisitos
 
-O algoritmo de atualização de preços do CryptoDash funciona da seguinte maneira:
+- Node.js 18+
+- PostgreSQL
+- NPM ou Yarn
 
-1. **Atualização Frequente**: Os valores das criptomoedas são atualizados a cada 5 segundos.
-2. **Variação Aleatória**: Cada criptomoeda tem 50% de chance de não ter seu valor alterado em cada atualização. Se houver uma alteração, o valor pode variar entre -1% e +1%.
-3. **Cálculo de Novos Valores**:
-   - Se a variação for aplicada, o novo preço e a nova capitalização de mercado são calculados com base na variação aleatória.
-   - A variação de preço em 24 horas é atualizada apenas se houver uma alteração no preço.
-4. **Top Gainers e Losers**: Após cada atualização, o sistema recalcula quais são as 5 criptomoedas que mais ganharam e perderam valor.
-
-## Instalação
+## Configuração
 
 1. Clone o repositório:
-   ```bash
-   git clone https://github.com/GustQueiroz/CryptoDash
-   ```
-2. Navegue até o diretório do projeto:
-   ```bash
-   cd CryptoDash
-   ```
-3. Instale as dependências:
-   ```bash
-   npm install
-   ```
-4. Inicie o aplicativo:
-   ```bash
-   npm run dev
-   ```
 
-## Contribuição
+```bash
+git clone https://github.com/seu-usuario/crypto-dashboard.git
+cd crypto-dashboard
+```
 
-Contribuições são bem-vindas! Sinta-se à vontade para abrir um pull request ou relatar problemas.
+2. Instale as dependências:
+
+```bash
+npm install
+# ou
+yarn
+```
+
+3. Instale o Prisma CLI globalmente (opcional):
+
+```bash
+npm install -g prisma
+# ou
+yarn global add prisma
+```
+
+4. Configure as variáveis de ambiente:
+
+Crie um arquivo `.env` na raiz do projeto com o seguinte conteúdo:
+
+```
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/cryptodash?schema=public"
+JWT_SECRET="sua-chave-secreta-para-jwt"
+```
+
+Substitua `usuario`, `senha` e outros valores conforme necessário.
+
+5. Execute as migrações do Prisma:
+
+```bash
+npx prisma migrate dev
+# ou
+yarn prisma migrate dev
+```
+
+6. Inicie o servidor de desenvolvimento:
+
+```bash
+npm run dev
+# ou
+yarn dev
+```
+
+7. Acesse a aplicação em `http://localhost:3000`
+
+## Estrutura do Projeto
+
+- `/app` - Código da aplicação Next.js
+  - `/api` - Rotas da API
+  - `/components` - Componentes React
+  - `/hooks` - Hooks personalizados
+  - `/lib` - Utilitários e configurações
+  - `/prisma` - Esquema e migrações do Prisma
+
+## Pacotes Necessários
+
+Instale os seguintes pacotes para o projeto:
+
+```bash
+npm install @prisma/client bcryptjs jsonwebtoken zod axios
+npm install -D prisma @types/bcryptjs @types/jsonwebtoken
+```
+
+## Comandos Úteis
+
+- `npx prisma studio` - Interface visual para gerenciar o banco de dados
+- `npx prisma migrate reset` - Resetar o banco de dados (cuidado: apaga todos os dados)
+- `npx prisma generate` - Gerar cliente Prisma após alterações no esquema
 
 ## Licença
 
-Este projeto está licenciado sob a MIT License - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+MIT

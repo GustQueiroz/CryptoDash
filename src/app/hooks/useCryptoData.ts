@@ -26,7 +26,7 @@ export function useCryptoData() {
 
   useEffect(() => {
     fetchCryptoData();
-    const interval = setInterval(fetchCryptoData, 60000); // Atualiza a cada minuto
+    const interval = setInterval(fetchCryptoData, 30000);
     return () => clearInterval(interval);
   }, []);
 

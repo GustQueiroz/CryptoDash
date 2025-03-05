@@ -1,0 +1,109 @@
+// Este é o esquema Prisma para o projeto CryptoDash
+// Definição da fonte de dados (PostgreSQL)
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Configuração do cliente Prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Modelo de usuário
+model User {
+  id              String        @id @default(uuid())
+  email           String        @unique
+  name            String?
+  password        String
+  wallets         Wallet[]
+  transactions    Transaction[]
+  favorites       Favorite[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+// Modelo de carteira
+model Wallet {
+  id           String         @id @default(uuid())
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balances     Balance[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+// Modelo de saldos na carteira
+model Balance {
+  id        String   @id @default(uuid())
+  walletId  String
+  wallet    Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  assetId   String
+  asset     Asset    @relation(fields: [assetId], references: [id])
+  amount    Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([walletId, assetId])
+}
+
+// Modelo de ativos (criptomoedas ou fiat)
+model Asset {
+  id          String     @id @default(uuid())
+  symbol      String     @unique
+  name        String
+  type        AssetType
+  balances    Balance[]
+  transactions Transaction[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// Modelo de transações
+model Transaction {
+  id            String          @id @default(uuid())
+  userId        String
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type          TransactionType
+  assetId       String
+  asset         Asset           @relation(fields: [assetId], references: [id])
+  amount        Float
+  price         Float?          // Preço unitário no momento da transação (para compra/venda)
+  totalValue    Float?          // Valor total da transação
+  status        Status          @default(COMPLETED)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+// Modelo de favoritos
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  symbol    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, symbol])
+}
+
+// Enums
+enum AssetType {
+  CRYPTOCURRENCY
+  FIAT
+}
+
+enum TransactionType {
+  BUY
+  SELL
+  DEPOSIT
+  WITHDRAW
+}
+
+enum Status {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+} 

@@ -13,8 +13,8 @@ export default function Navbar() {
     router.push("/profile");
   };
 
-  const handleLogout = () => {
-    localStorage.clear();
+  const handleInitialClick = () => {
+    router.push("/");
   };
 
   return (
@@ -28,7 +28,10 @@ export default function Navbar() {
       }}
     >
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box
+          onClick={handleInitialClick}
+          sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+        >
           <Typography
             variant="h6"
             component="div"
@@ -67,21 +70,6 @@ export default function Navbar() {
             >
               {user.name.charAt(0).toUpperCase()}
             </Avatar>
-            <Typography
-              variant="h6"
-              component="div"
-              onClick={handleLogout}
-              sx={{
-                ml: 1,
-                fontWeight: "bold",
-                background: "white",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                cursor: "pointer",
-              }}
-            >
-              Sair
-            </Typography>
           </Box>
         )}
       </Toolbar>

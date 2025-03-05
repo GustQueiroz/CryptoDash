@@ -1,23 +1,28 @@
+import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import ThemeRegistry from "./mui/ThemeRegistry";
+import AuthProvider from "./components/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "CryptoDash",
-  description: "Acompanhe suas criptomoedas em tempo real",
+  title: "CryptoDash - Gerenciador de Criptomoedas",
+  description:
+    "Plataforma para gerenciar suas criptomoedas, visualizar carteira, e acompanhar transações",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-[#0A0E11] text-white`}>
-        {children}
+    <html lang="pt-BR">
+      <body className={inter.className}>
+        <ThemeRegistry>
+          <AuthProvider>{children}</AuthProvider>
+        </ThemeRegistry>
       </body>
     </html>
   );
