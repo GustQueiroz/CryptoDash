@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CryptoDash
 
-## Getting Started
+O **CryptoDash** é um aplicativo de dashboard de criptomoedas que permite aos usuários visualizar informações sobre várias criptomoedas, incluindo preços, capitalização de mercado e volume de negociação. O sistema também permite que os usuários comprem, vendam e troquem criptomoedas, além de gerenciar seu saldo.
 
-First, run the development server:
+## Funcionalidades
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Visualização de Criptomoedas**: Acompanhe o preço, capitalização de mercado e volume de negociação de diversas criptomoedas.
+- **Top Gainers e Losers**: Veja quais criptomoedas tiveram as maiores variações de preço nas últimas 24 horas.
+- **Gerenciamento de Saldo**: Os usuários podem gerenciar seu saldo e realizar transações de compra e venda de criptomoedas.
+- **Atualizações em Tempo Real**: Os dados das criptomoedas são atualizados a cada 5 segundos, proporcionando uma experiência dinâmica.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Como Funciona o Algoritmo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+O algoritmo de atualização de preços do CryptoDash funciona da seguinte maneira:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Atualização Frequente**: Os valores das criptomoedas são atualizados a cada 5 segundos.
+2. **Variação Aleatória**: Cada criptomoeda tem 50% de chance de não ter seu valor alterado em cada atualização. Se houver uma alteração, o valor pode variar entre -1% e +1%.
+3. **Cálculo de Novos Valores**:
+   - Se a variação for aplicada, o novo preço e a nova capitalização de mercado são calculados com base na variação aleatória.
+   - A variação de preço em 24 horas é atualizada apenas se houver uma alteração no preço.
+4. **Top Gainers e Losers**: Após cada atualização, o sistema recalcula quais são as 5 criptomoedas que mais ganharam e perderam valor.
 
-## Learn More
+## Instalação
 
-To learn more about Next.js, take a look at the following resources:
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/GustQueiroz/CryptoDash
+   ```
+2. Navegue até o diretório do projeto:
+   ```bash
+   cd CryptoDash
+   ```
+3. Instale as dependências:
+   ```bash
+   npm install
+   ```
+4. Inicie o aplicativo:
+   ```bash
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contribuição
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Contribuições são bem-vindas! Sinta-se à vontade para abrir um pull request ou relatar problemas.
 
-## Deploy on Vercel
+## Licença
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Este projeto está licenciado sob a MIT License - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
