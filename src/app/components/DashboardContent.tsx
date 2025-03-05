@@ -10,6 +10,7 @@ import { useCryptoUpdater } from "../hooks/useCryptoUpdater";
 export default function DashboardContent() {
   const [isClient, setIsClient] = useState(false);
   const { cryptoData, lastUpdateTime } = useCryptoUpdater();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [secondsSinceUpdate, setSecondsSinceUpdate] = useState(0);
 
   useEffect(() => {

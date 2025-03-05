@@ -15,7 +15,6 @@ export default function DashboardWrapper() {
     checkAuth();
   }, [checkAuth]);
 
-  // Verificar autenticação a cada 500ms para detectar mudanças no localStorage
   useEffect(() => {
     const interval = setInterval(() => {
       checkAuth();
@@ -41,6 +40,5 @@ export default function DashboardWrapper() {
     return <Auth />;
   }
 
-  // Retorna apenas o DashboardContent sem envolver em nenhuma estrutura adicional
   return <DashboardContent />;
 }

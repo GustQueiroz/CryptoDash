@@ -19,7 +19,6 @@ export interface TopMoversProps {
 }
 
 export default function TopMovers({ title, cryptos, emoji }: TopMoversProps) {
-  // Adicionando verificação para evitar erro se cryptos for undefined
   if (!cryptos || !Array.isArray(cryptos)) {
     return (
       <Card

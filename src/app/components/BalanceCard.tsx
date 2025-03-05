@@ -7,13 +7,16 @@ import { useEffect, useState } from "react";
 export default function BalanceCard() {
   const { user } = useAuth();
   const [totalBalance, setTotalBalance] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [dayChange, setDayChange] = useState(2.5); // Valor fixo para exemplo
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profit30d, setProfit30d] = useState(1245.0); // Valor fixo para exemplo
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [totalProfit, setTotalProfit] = useState(5432.0); // Valor fixo para exemplo
 
   useEffect(() => {
     if (user) {
-      let cryptoValue = 0;
+      const cryptoValue = 0;
       setTotalBalance(user.wallet.balance + cryptoValue);
     }
   }, [user]);
@@ -25,7 +28,6 @@ export default function BalanceCard() {
         color: "white",
         borderRadius: "12px",
         width: "100%",
-
         maxWidth: "400px",
         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         border: "1px solid rgba(255, 255, 255, 0.1)",
