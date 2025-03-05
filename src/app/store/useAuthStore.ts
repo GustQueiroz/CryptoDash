@@ -18,7 +18,6 @@ interface AuthState {
   checkAuth: () => boolean;
 }
 
-// Função para verificar o localStorage diretamente
 const getStoredAuth = () => {
   try {
     const storedData = localStorage.getItem("auth-storage");
@@ -35,8 +34,6 @@ const getStoredAuth = () => {
   }
   return { token: null, user: null, isAuthenticated: false };
 };
-
-// Criar store com estado inicial do localStorage
 const {
   token: initialToken,
   user: initialUser,
@@ -45,7 +42,6 @@ const {
   ? getStoredAuth()
   : { token: null, user: null, isAuthenticated: false };
 
-// Cria a store com persistência
 const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -57,10 +53,8 @@ const useAuthStore = create<AuthState>()(
       setAuth: (token, user) =>
         set({ token, user, isAuthenticated: true, isLoading: false }),
       logout: () => set({ token: null, user: null, isAuthenticated: false }),
-      // Método para verificar autenticação diretamente do localStorage
       checkAuth: () => {
         const stored = getStoredAuth();
-        // Atualizar o estado se necessário
         if (stored.isAuthenticated && !get().isAuthenticated) {
           set({
             token: stored.token,
@@ -87,17 +81,14 @@ const useAuthStore = create<AuthState>()(
 );
 
 export const checkIsAuthenticated = () => {
-  // Primeiro verifica localmente
   const state = useAuthStore.getState();
-  console.log("Verificando autenticação:", state); // Adicionando log
+  console.log("Verificando autenticação:", state);
   if (state.isAuthenticated && state.token && state.user) {
     return true;
   }
 
-  // Depois verifica no localStorage
   const stored = getStoredAuth();
   if (stored.isAuthenticated) {
-    // Atualiza o Zustand se necessário
     useAuthStore.setState({
       token: stored.token,
       user: stored.user,
