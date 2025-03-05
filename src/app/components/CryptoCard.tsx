@@ -28,7 +28,7 @@ export default function CryptoCard({ crypto }: CryptoCardProps) {
   return (
     <Card
       sx={{
-        backgroundColor: "#0F1215",
+        backgroundColor: "#0E1215",
         borderRadius: "12px",
         overflow: "hidden",
         height: "100%",

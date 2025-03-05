@@ -21,7 +21,7 @@ export default function Navbar() {
             sx={{
               ml: 1,
               fontWeight: "bold",
-              background: "linear-gradient(45deg, #4311b8 30%, #c221f3 90%)",
+              background: "linear-gradient(45deg, #276dbd 30%, #9d32ce 90%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}

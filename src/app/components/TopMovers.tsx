@@ -1,147 +1,111 @@
 "use client";
 
-import { Card, CardContent, Typography, Box, Grid } from "@mui/material";
+import React from "react";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
+import { Crypto } from "./CryptoCard";
 
-interface TopMover {
-  id: string;
-  symbol: string;
-  name: string;
-  price_change_percentage_24h: number;
+export interface TopMoversProps {
+  title?: string;
+  cryptos: Crypto[];
+  emoji: string;
 }
 
-interface TopMoversProps {
-  gainers: TopMover[];
-  losers: TopMover[];
-}
+export default function TopMovers({ title, cryptos, emoji }: TopMoversProps) {
+  // Adicionando verificação para evitar erro se cryptos for undefined
+  if (!cryptos || !Array.isArray(cryptos)) {
+    return (
+      <Card
+        sx={{
+          backgroundColor: "#0F1215",
+          borderRadius: "12px",
+          height: "100%",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+        }}
+      >
+        <CardContent>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            {emoji} {title || (emoji === "🚀" ? "Top Ganhos" : "Top Perdas")}
+          </Typography>
+          <Typography variant="body2">Carregando dados...</Typography>
+        </CardContent>
+      </Card>
+    );
+  }
 
-export default function TopMovers({ gainers, losers }: TopMoversProps) {
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={6}>
-        <Card
-          sx={{
-            backgroundColor: "#0F1215",
-            color: "white",
-            borderRadius: "12px",
-            height: "100%",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          <CardContent sx={{ p: 2 }}>
-            <Box>
-              <Box
-                sx={{ display: "flex", alignItems: "center", mb: 2, gap: 1 }}
-              >
-                <Typography sx={{ fontSize: "1.2rem" }}>🚀</Typography>
-                <Typography variant="subtitle2" sx={{ color: "#4CAF50" }}>
-                  Top Ganhos
-                </Typography>
-              </Box>
-              {gainers.map((coin) => (
-                <Box
-                  key={coin.id}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: 1.5,
-                  }}
-                >
-                  <Box sx={{ display: "flex", gap: 1 }}>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "#FFFFFF",
-                        fontWeight: 500,
-                      }}
-                    >
-                      {coin.name}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "rgba(255, 255, 255, 0.5)",
-                      }}
-                    >
-                      {coin.symbol.toUpperCase()}
-                    </Typography>
-                  </Box>
-                  <Typography
-                    variant="body2"
-                    sx={{ color: "#4CAF50", fontWeight: 500 }}
-                  >
-                    +{coin.price_change_percentage_24h.toFixed(1)}%
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </CardContent>
-        </Card>
-      </Grid>
+    <Card
+      sx={{
+        backgroundColor: "#0F1215",
+        borderRadius: "12px",
+        height: "100%",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+      }}
+    >
+      <CardContent>
+        <Typography variant="h6" sx={{ mb: 2, color: "white" }}>
+          {emoji} {title || (emoji === "🚀" ? "Top Ganhos" : "Top Perdas")}
+        </Typography>
+        <List sx={{ p: 0 }}>
+          {cryptos.map((crypto) => {
+            const priceChangeColor =
+              crypto.price_change_24h >= 0 ? "#00C853" : "#FF3D00";
+            const priceChangeSymbol = crypto.price_change_24h >= 0 ? "+" : "";
 
-      <Grid item xs={6}>
-        <Card
-          sx={{
-            backgroundColor: "#0F1215",
-            color: "white",
-            borderRadius: "12px",
-            height: "100%",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          <CardContent sx={{ p: 2 }}>
-            <Box>
-              <Box
-                sx={{ display: "flex", alignItems: "center", mb: 2, gap: 1 }}
+            return (
+              <ListItem
+                key={crypto.id}
+                sx={{
+                  px: 0,
+                  py: 1,
+
+                  "&:last-child": {
+                    borderBottom: "none",
+                  },
+                }}
               >
-                <Typography sx={{ fontSize: "1.2rem" }}>📉</Typography>
-                <Typography variant="subtitle2" sx={{ color: "#EF5350" }}>
-                  Top Perdas
-                </Typography>
-              </Box>
-              {losers.map((coin) => (
-                <Box
-                  key={coin.id}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: 1.5,
-                  }}
-                >
-                  <Box sx={{ display: "flex", gap: 1 }}>
-                    <Typography
-                      variant="body2"
+                <ListItemText
+                  primary={
+                    <Box
                       sx={{
-                        color: "#FFFFFF",
-                        fontWeight: 500,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
                       }}
                     >
-                      {coin.name}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "rgba(255, 255, 255, 0.5)",
-                      }}
-                    >
-                      {coin.symbol.toUpperCase()}
-                    </Typography>
-                  </Box>
-                  <Typography
-                    variant="body2"
-                    sx={{ color: "#EF5350", fontWeight: 500 }}
-                  >
-                    {coin.price_change_percentage_24h.toFixed(1)}%
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </CardContent>
-        </Card>
-      </Grid>
-    </Grid>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Typography variant="body1" color="white">
+                          {crypto.name}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{ ml: 1, color: "rgba(255, 255, 255, 0.6)" }}
+                        >
+                          {crypto.symbol}
+                        </Typography>
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: priceChangeColor, fontWeight: "bold" }}
+                      >
+                        {priceChangeSymbol}
+                        {crypto.price_change_24h.toFixed(1)}%
+                      </Typography>
+                    </Box>
+                  }
+                />
+              </ListItem>
+            );
+          })}
+        </List>
+      </CardContent>
+    </Card>
   );
 }
