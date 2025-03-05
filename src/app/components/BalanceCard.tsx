@@ -15,8 +15,7 @@ export default function BalanceCard() {
       const currentBalance = getTotalBalance();
       setTotalBalance(currentBalance);
 
-      // Calcular a porcentagem de lucro/perda e o lucro total
-      const initialBalance = user.wallet.assets.USDT.amount; // Valor inicial investido
+      const initialBalance = user.wallet.assets.USDT.amount;
       const percentageChange =
         ((currentBalance - initialBalance) / initialBalance) * 100;
       const profitValue = currentBalance - initialBalance;
@@ -26,14 +25,12 @@ export default function BalanceCard() {
     }
   }, [user, getTotalBalance]);
 
-  // Função para determinar a cor baseada no valor
   const getProfitColor = (value: number) => {
-    if (value > 0) return "#4CAF50"; // Verde para lucro
-    if (value < 0) return "#FF4444"; // Vermelho para perda
-    return "#8BC34A"; // Verde mais claro para valor igual
+    if (value > 0) return "#4CAF50";
+    if (value < 0) return "#FF4444";
+    return "#8BC34A";
   };
 
-  // Função para formatar a porcentagem
   const formatPercentage = (percentage: number) => {
     const prefix = percentage > 0 ? "+" : "";
     return `${prefix}${percentage.toFixed(2)}%`;

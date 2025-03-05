@@ -96,15 +96,9 @@ export function useTradeOperations() {
         };
       }
 
-      // Criar uma cópia profunda do usuário atual
       const updatedUser = JSON.parse(JSON.stringify(user));
-
-      // Atualizar o saldo em USDT
       updatedUser.wallet.assets.USDT.amount -= calculation.totalCost;
-
-      // Adicionar ou atualizar a nova criptomoeda
       if (updatedUser.wallet.assets[cryptoSymbol]) {
-        // Se já possui a moeda, atualiza a quantidade
         updatedUser.wallet.assets[cryptoSymbol] = {
           ...updatedUser.wallet.assets[cryptoSymbol],
           amount: updatedUser.wallet.assets[cryptoSymbol].amount + quantity,
@@ -114,7 +108,6 @@ export function useTradeOperations() {
             crypto.current_price,
         };
       } else {
-        // Se não possui a moeda, cria um novo registro
         updatedUser.wallet.assets[cryptoSymbol] = {
           symbol: cryptoSymbol,
           amount: quantity,
@@ -124,10 +117,8 @@ export function useTradeOperations() {
         };
       }
 
-      // Salvar no localStorage
       localStorage.setItem("user", JSON.stringify(updatedUser));
 
-      // Em vez de recarregar a página, atualize o estado
       await checkAuth();
 
       return {
@@ -145,7 +136,6 @@ export function useTradeOperations() {
     }
   };
 
-  // Retorna os valores e funções necessários
   return {
     calculatePurchase,
     executePurchase,

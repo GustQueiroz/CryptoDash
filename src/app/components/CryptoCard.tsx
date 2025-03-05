@@ -66,7 +66,6 @@ export default function CryptoCard({ crypto }: CryptoCardProps) {
       setQuantity("");
       setError(null);
 
-      // Log do estado atual do localStorage
       console.log(
         "Estado atual do localStorage após a compra:",
         JSON.parse(localStorage.getItem("user") || "{}")
