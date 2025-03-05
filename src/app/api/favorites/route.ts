@@ -56,12 +56,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { cryptoId, symbol, name } = validation.data;
+    const { symbol } = validation.data;
 
     const existingFavorite = await prisma.favorite.findFirst({
       where: {
         userId,
-        cryptoId,
       },
     });
 
@@ -75,9 +74,7 @@ export async function POST(request: NextRequest) {
     const favorite = await prisma.favorite.create({
       data: {
         userId,
-        cryptoId,
         symbol,
-        name,
       },
     });
 
@@ -116,7 +113,6 @@ export async function DELETE(request: NextRequest) {
     const favorite = await prisma.favorite.findFirst({
       where: {
         userId,
-        cryptoId,
       },
     });
 
