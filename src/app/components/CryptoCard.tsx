@@ -17,6 +17,7 @@ import { useTradeOperations } from "../hooks/useTradeOperations";
 import { useAuth } from "../hooks/useAuth";
 
 export interface Crypto {
+  price_change_percentage_24h: number;
   id: string;
   rank: number;
   symbol: string;

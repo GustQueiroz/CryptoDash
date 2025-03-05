@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "./useAuth";
-import { useCryptoUpdater } from "./useCryptoUpdater";
-import { useRouter } from "next/navigation";
+import { useCryptoData } from "./useCryptoData";
 
 interface TradeCalculation {
   quantity: number;
@@ -13,18 +12,15 @@ interface TradeCalculation {
 }
 
 export function useTradeOperations() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user, getTotalBalance, checkAuth } = useAuth();
-  const { cryptoData } = useCryptoUpdater();
+  const { cryptocurrencies } = useCryptoData();
   const [isProcessing, setIsProcessing] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const router = useRouter();
 
   const calculatePurchase = (
     cryptoSymbol: string,
     quantity: number
   ): TradeCalculation => {
-    if (!cryptoData || !user) {
+    if (!cryptocurrencies || !user) {
       return {
         quantity: 0,
         totalCost: 0,
@@ -33,8 +29,8 @@ export function useTradeOperations() {
       };
     }
 
-    const crypto = cryptoData.cryptocurrencies.find(
-      (c) => c.symbol === cryptoSymbol
+    const crypto = cryptocurrencies.find(
+      (c) => c.symbol.toUpperCase() === cryptoSymbol.toUpperCase()
     );
 
     if (!crypto) {
@@ -68,15 +64,15 @@ export function useTradeOperations() {
     try {
       setIsProcessing(true);
 
-      if (!user || !cryptoData) {
+      if (!user || !cryptocurrencies) {
         return {
           success: false,
           message: "Dados não disponíveis",
         };
       }
 
-      const crypto = cryptoData.cryptocurrencies.find(
-        (c) => c.symbol === cryptoSymbol
+      const crypto = cryptocurrencies.find(
+        (c) => c.symbol.toUpperCase() === cryptoSymbol.toUpperCase()
       );
 
       if (!crypto) {
@@ -96,20 +92,24 @@ export function useTradeOperations() {
         };
       }
 
+      // Atualiza o saldo de USDT
+      await checkAuth();
+
+      // Deduz o USDT e adiciona a criptomoeda
       const updatedUser = JSON.parse(JSON.stringify(user));
       updatedUser.wallet.assets.USDT.amount -= calculation.totalCost;
-      if (updatedUser.wallet.assets[cryptoSymbol]) {
-        updatedUser.wallet.assets[cryptoSymbol] = {
-          ...updatedUser.wallet.assets[cryptoSymbol],
-          amount: updatedUser.wallet.assets[cryptoSymbol].amount + quantity,
-          atualValue: crypto.current_price,
-          balance:
-            (updatedUser.wallet.assets[cryptoSymbol].amount + quantity) *
-            crypto.current_price,
-        };
+
+      if (updatedUser.wallet.assets[cryptoSymbol.toUpperCase()]) {
+        updatedUser.wallet.assets[cryptoSymbol.toUpperCase()].amount +=
+          quantity;
+        updatedUser.wallet.assets[cryptoSymbol.toUpperCase()].atualValue =
+          crypto.current_price;
+        updatedUser.wallet.assets[cryptoSymbol.toUpperCase()].balance =
+          updatedUser.wallet.assets[cryptoSymbol.toUpperCase()].amount *
+          crypto.current_price;
       } else {
-        updatedUser.wallet.assets[cryptoSymbol] = {
-          symbol: cryptoSymbol,
+        updatedUser.wallet.assets[cryptoSymbol.toUpperCase()] = {
+          symbol: cryptoSymbol.toUpperCase(),
           amount: quantity,
           purchaseValue: crypto.current_price,
           atualValue: crypto.current_price,
@@ -117,8 +117,14 @@ export function useTradeOperations() {
         };
       }
 
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      // Recalcula o saldo total
+      const assetsArray = Object.values(updatedUser.wallet.assets);
+      updatedUser.wallet.totalBalance = assetsArray.reduce(
+        (total: any, asset: any) => total + asset.balance,
+        0
+      );
 
+      localStorage.setItem("user", JSON.stringify(updatedUser));
       await checkAuth();
 
       return {

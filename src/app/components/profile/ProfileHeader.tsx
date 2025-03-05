@@ -46,11 +46,7 @@ export function ProfileHeader() {
 
         <div className="flex-1 text-center md:text-left">
           <h1 className="text-2xl font-bold text-white">{userName}</h1>
-          <p className="text-gray-400 mt-1">
-            @{userName.split(" ")[0].toLowerCase()}
-            {userName.split(" ")[1].toLowerCase()}
-            crypto
-          </p>
+
           <p className="text-gray-400 mt-2">
             Investidor desde 2025 • São Paulo, Brasil
           </p>

@@ -13,6 +13,10 @@ export default function Navbar() {
     router.push("/profile");
   };
 
+  const handleLogout = () => {
+    localStorage.clear();
+  };
+
   return (
     <AppBar
       position="static"
@@ -63,6 +67,21 @@ export default function Navbar() {
             >
               {user.name.charAt(0).toUpperCase()}
             </Avatar>
+            <Typography
+              variant="h6"
+              component="div"
+              onClick={handleLogout}
+              sx={{
+                ml: 1,
+                fontWeight: "bold",
+                background: "white",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                cursor: "pointer",
+              }}
+            >
+              Sair
+            </Typography>
           </Box>
         )}
       </Toolbar>

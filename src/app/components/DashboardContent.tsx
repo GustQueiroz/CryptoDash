@@ -1,37 +1,40 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Container, Grid, Typography, Box } from "@mui/material";
+import {
+  Container,
+  Grid,
+  Typography,
+  Box,
+  CircularProgress,
+} from "@mui/material";
 import BalanceCard from "./BalanceCard";
 import TopMovers from "./TopMovers";
 import CryptoCard from "./CryptoCard";
-import { useCryptoUpdater } from "../hooks/useCryptoUpdater";
+import { useCryptoData } from "../hooks/useCryptoData";
 
 export default function DashboardContent() {
   const [isClient, setIsClient] = useState(false);
-  const { cryptoData, lastUpdateTime } = useCryptoUpdater();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [secondsSinceUpdate, setSecondsSinceUpdate] = useState(0);
+  const { cryptocurrencies, loading, getTopGainers, getTopLosers } =
+    useCryptoData();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    if (!lastUpdateTime) return;
-
-    const timer = setInterval(() => {
-      const seconds = Math.floor(
-        (new Date().getTime() - lastUpdateTime.getTime()) / 1000
-      );
-      setSecondsSinceUpdate(seconds);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [lastUpdateTime]);
-
-  if (!isClient) {
-    return null;
+  if (!isClient || loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
@@ -41,18 +44,10 @@ export default function DashboardContent() {
           <BalanceCard />
         </Grid>
         <Grid item xs={12} md={4}>
-          <TopMovers
-            title="Top Ganhos"
-            cryptos={cryptoData?.top_gainers || []}
-            emoji="🚀"
-          />
+          <TopMovers title="Top Ganhos" cryptos={getTopGainers()} emoji="🚀" />
         </Grid>
         <Grid item xs={12} md={4}>
-          <TopMovers
-            title="Top Perdas"
-            cryptos={cryptoData?.top_losers || []}
-            emoji="📉"
-          />
+          <TopMovers title="Top Perdas" cryptos={getTopLosers()} emoji="📉" />
         </Grid>
 
         <Grid item xs={12}>
@@ -71,9 +66,22 @@ export default function DashboardContent() {
           </Box>
         </Grid>
 
-        {cryptoData?.cryptocurrencies?.slice(0, 30).map((crypto) => (
+        {cryptocurrencies?.slice(0, 30).map((crypto) => (
           <Grid item xs={12} sm={6} md={4} lg={4} key={crypto.id}>
-            <CryptoCard crypto={crypto} />
+            <CryptoCard
+              crypto={{
+                id: crypto.id,
+                rank: crypto.market_cap_rank,
+                symbol: crypto.symbol,
+                name: crypto.name,
+                image: crypto.image,
+                current_price: crypto.current_price,
+                market_cap: crypto.market_cap,
+                volume_24h: crypto.total_volume,
+                price_change_24h: crypto.price_change_percentage_24h,
+                has_buy_button: true,
+              }}
+            />
           </Grid>
         ))}
       </Grid>

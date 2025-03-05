@@ -1,134 +1,148 @@
 "use client";
 
-import { Card, CardContent, Typography } from "@mui/material";
+import { Card, CardContent, Typography, Box, Grid } from "@mui/material";
 import { useAuth } from "../hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useCryptoData } from "../hooks/useCryptoData";
 
 export default function BalanceCard() {
-  const { user, getTotalBalance } = useAuth();
-  const [totalBalance, setTotalBalance] = useState(0);
-  const [profitPercentage, setProfitPercentage] = useState(0);
-  const [totalProfit, setTotalProfit] = useState(0);
+  const { user } = useAuth();
+  const { cryptocurrencies } = useCryptoData();
 
-  useEffect(() => {
-    if (user) {
-      const currentBalance = getTotalBalance();
-      setTotalBalance(currentBalance);
+  if (!user) return null;
 
-      const initialBalance = user.wallet.assets.USDT.amount;
-      const percentageChange =
-        ((currentBalance - initialBalance) / initialBalance) * 100;
-      const profitValue = currentBalance - initialBalance;
+  const wallet = user.wallet;
+  const assets = Object.entries(wallet.assets).filter(
+    ([symbol]) => symbol !== "USDT"
+  );
 
-      setProfitPercentage(percentageChange);
-      setTotalProfit(profitValue);
-    }
-  }, [user, getTotalBalance]);
-
-  const getProfitColor = (value: number) => {
-    if (value > 0) return "#4CAF50";
-    if (value < 0) return "#FF4444";
-    return "#8BC34A";
+  // Calcula o lucro/prejuízo total
+  const calculateTotalProfit = () => {
+    let totalProfit = 0;
+    assets.forEach(([symbol, asset]) => {
+      const crypto = cryptocurrencies.find(
+        (c) => c.symbol.toUpperCase() === symbol
+      );
+      if (crypto) {
+        const currentValue = asset.amount * crypto.current_price;
+        const purchaseValue = asset.amount * asset.purchaseValue;
+        totalProfit += currentValue - purchaseValue;
+      }
+    });
+    return totalProfit;
   };
 
-  const formatPercentage = (percentage: number) => {
-    const prefix = percentage > 0 ? "+" : "";
-    return `${prefix}${percentage.toFixed(2)}%`;
-  };
+  const totalProfit = calculateTotalProfit();
+  const profitPercentage = (totalProfit / wallet.totalBalance) * 100;
 
   return (
     <Card
       sx={{
-        backgroundColor: "#0F1215",
-        color: "white",
+        backgroundColor: "#0E1215",
         borderRadius: "12px",
-        width: "100%",
-        maxWidth: "400px",
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         border: "1px solid rgba(255, 255, 255, 0.1)",
       }}
     >
       <CardContent>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "20px",
-          }}
-        >
-          <Typography
-            variant="subtitle1"
-            sx={{ color: "#FFFFFF", opacity: 0.7 }}
-          >
-            Saldo Total
-          </Typography>
-          <Typography variant="caption" sx={{ color: "#FFFFFF", opacity: 0.7 }}>
-            Atualizado agora
-          </Typography>
-        </div>
+        <Typography variant="h6" color="white" gutterBottom>
+          Seu Portfolio
+        </Typography>
 
-        <div style={{ marginBottom: "20px" }}>
-          <Typography
-            variant="h4"
-            component="div"
-            sx={{ fontWeight: "bold", color: "#FFFFFF", marginBottom: "4px" }}
-          >
-            R${" "}
-            {(totalBalance * 5.8).toLocaleString("pt-BR", {
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="h4" color="white">
+            $
+            {wallet.totalBalance.toLocaleString("en-US", {
               minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
             })}
           </Typography>
-          <Typography
-            variant="body2"
-            sx={{ color: "#9E9E9E", marginBottom: "8px" }}
-          >
-            ${" "}
-            {totalBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}{" "}
-            USD
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{ color: getProfitColor(profitPercentage) }}
-          >
-            {formatPercentage(profitPercentage)} nas últimas 24h
-          </Typography>
-        </div>
 
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <div>
-            <Typography
-              variant="subtitle2"
-              sx={{ color: "#FFFFFF", opacity: 0.7, marginBottom: "4px" }}
-            >
-              Lucro 30 dias
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ color: getProfitColor(profitPercentage) }}
-            >
-              {formatPercentage(profitPercentage)}
-            </Typography>
-          </div>
-          <div>
-            <Typography
-              variant="subtitle2"
-              sx={{ color: "#FFFFFF", opacity: 0.7, marginBottom: "4px" }}
-            >
-              Lucro Total
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ color: getProfitColor(totalProfit) }}
-            >
-              {totalProfit > 0 ? "+" : ""}${" "}
-              {totalProfit.toLocaleString("en-US", {
-                minimumFractionDigits: 1,
-                maximumFractionDigits: 2,
-              })}
-            </Typography>
-          </div>
-        </div>
+          <Typography
+            variant="body1"
+            sx={{
+              color: totalProfit >= 0 ? "#00C853" : "#FF3D00",
+              mt: 1,
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            {totalProfit >= 0 ? "+" : ""}$
+            {Math.abs(totalProfit).toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            <span style={{ fontSize: "0.9em" }}>
+              ({profitPercentage.toFixed(2)}%)
+            </span>
+          </Typography>
+        </Box>
+
+        <Grid container spacing={2} sx={{ mt: 2 }}>
+          {assets.map(([symbol, asset]) => {
+            const crypto = cryptocurrencies.find(
+              (c) => c.symbol.toUpperCase() === symbol
+            );
+            if (!crypto) return null;
+
+            const currentValue = asset.amount * crypto.current_price;
+            const profit = currentValue - asset.amount * asset.purchaseValue;
+            const profitPercent =
+              (profit / (asset.amount * asset.purchaseValue)) * 100;
+
+            return (
+              <Grid item xs={12} key={symbol}>
+                <Box
+                  sx={{
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    borderRadius: "8px",
+                    p: 1.5,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography color="white">{symbol}</Typography>
+                    <Typography color="white">
+                      {asset.amount.toFixed(6)} {symbol}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      mt: 1,
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "rgba(255, 255, 255, 0.6)" }}
+                    >
+                      $
+                      {currentValue.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: profit >= 0 ? "#00C853" : "#FF3D00",
+                      }}
+                    >
+                      {profit >= 0 ? "+" : ""}
+                      {profitPercent.toFixed(2)}%
+                    </Typography>
+                  </Box>
+                </Box>
+              </Grid>
+            );
+          })}
+        </Grid>
       </CardContent>
     </Card>
   );

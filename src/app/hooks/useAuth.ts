@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useCryptoUpdater } from "./useCryptoUpdater";
+
+// Função simples para gerar um ID aleatório
+function generateId(): string {
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
+}
 
 export interface Wallet {
   totalBalance: number;
@@ -16,6 +23,14 @@ export interface Wallet {
   };
 }
 
+export interface Asset {
+  symbol: string;
+  amount: number;
+  purchaseValue: number;
+  atualValue: number;
+  balance: number;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -25,7 +40,6 @@ export interface User {
 }
 
 export function useAuth() {
-  const { cryptoData } = useCryptoUpdater();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -58,14 +72,10 @@ export function useAuth() {
     return amount * atualValue;
   };
 
-  const calculateTotalBalance = (assets: Wallet["assets"]) => {
-    return Object.values(assets).reduce((total, asset) => {
-      return total + asset.balance;
-    }, 0);
-  };
-
   const login = (
-    userData: Omit<User, "isLoggedIn" | "wallet"> & { initialBalance: number }
+    userData: Omit<User, "isLoggedIn" | "wallet" | "id"> & {
+      initialBalance: number;
+    }
   ) => {
     const initialAtualValue = 1;
     const initialBalance = calculateBalance(
@@ -74,6 +84,7 @@ export function useAuth() {
     );
 
     const newUser: User = {
+      id: generateId(),
       ...userData,
       isLoggedIn: true,
       wallet: {
@@ -96,56 +107,48 @@ export function useAuth() {
     return newUser;
   };
 
-  const updateAssetValues = useCallback(() => {
-    if (user && cryptoData?.cryptocurrencies) {
-      const updatedAssets = { ...user.wallet.assets };
+  const updateAsset = (
+    symbol: string,
+    amount: number,
+    currentPrice: number
+  ) => {
+    if (!user) return;
 
-      Object.entries(updatedAssets).forEach(([symbol, asset]) => {
-        const crypto = cryptoData.cryptocurrencies.find(
-          (crypto) => crypto.symbol === symbol
-        );
+    const updatedUser = JSON.parse(JSON.stringify(user));
 
-        if (crypto) {
-          const newAtualValue = crypto.current_price;
-          const newBalance = calculateBalance(asset.amount, newAtualValue);
-
-          updatedAssets[symbol] = {
-            ...asset,
-            atualValue: newAtualValue,
-            balance: newBalance,
-          };
-        }
-      });
-
-      const newTotalBalance = calculateTotalBalance(updatedAssets);
-
-      const updatedUser = {
-        ...user,
-        wallet: {
-          ...user.wallet,
-          assets: updatedAssets,
-          totalBalance: newTotalBalance,
-        },
+    // Atualizar ou adicionar o ativo
+    if (updatedUser.wallet.assets[symbol]) {
+      updatedUser.wallet.assets[symbol].amount += amount;
+      updatedUser.wallet.assets[symbol].atualValue = currentPrice;
+      updatedUser.wallet.assets[symbol].balance =
+        updatedUser.wallet.assets[symbol].amount * currentPrice;
+    } else {
+      updatedUser.wallet.assets[symbol] = {
+        symbol,
+        amount,
+        purchaseValue: currentPrice,
+        atualValue: currentPrice,
+        balance: amount * currentPrice,
       };
-
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      setUser(updatedUser);
     }
-  }, [user, cryptoData]);
 
-  useEffect(() => {
-    updateAssetValues();
-  }, [cryptoData, updateAssetValues]);
+    // Recalcular o saldo total com tipagem correta
+    const assetsArray = Object.values(updatedUser.wallet.assets) as Asset[];
+    updatedUser.wallet.totalBalance = assetsArray.reduce(
+      (total, asset) => total + asset.balance,
+      0
+    );
+
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+  };
 
   const getTotalBalance = () => {
     return user?.wallet.totalBalance || 0;
   };
 
   const logout = () => {
-    if (user) {
-      const updatedUser = { ...user, isLoggedIn: false };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-    }
+    localStorage.removeItem("user");
     setUser(null);
     setIsAuthenticated(false);
   };
@@ -158,5 +161,6 @@ export function useAuth() {
     logout,
     checkAuth,
     getTotalBalance,
+    updateAsset,
   };
 }
