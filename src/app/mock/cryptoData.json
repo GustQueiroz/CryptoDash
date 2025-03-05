@@ -1,0 +1,189 @@
+{
+  "market_data": {
+    "total_market_cap": "US$ 65,176,455,369",
+    "total_volume": "US$ 1,733,217,887,803",
+    "btc_dominance": "46.2%"
+  },
+  "cryptocurrencies": [
+    {
+      "id": "bitcoin",
+      "rank": 1,
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "image": "https://assets.coingecko.com/coins/images/1/large/bitcoin.png",
+      "current_price": 87393.5,
+      "market_cap": 65176455369,
+      "volume_24h": 1733217887803,
+      "price_change_1h": 1.2,
+      "price_change_24h": 5.5,
+      "price_change_7d": -0.8,
+      "sparkline": "path_to_sparkline"
+    },
+    {
+      "id": "ethereum",
+      "rank": 2,
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "image": "https://assets.coingecko.com/coins/images/279/large/ethereum.png",
+      "current_price": 2177.87,
+      "market_cap": 29551172850,
+      "volume_24h": 262626420977,
+      "price_change_1h": 1.0,
+      "price_change_24h": 6.9,
+      "price_change_7d": -12.0,
+      "sparkline": "path_to_sparkline"
+    },
+    {
+      "id": "xrp",
+      "rank": 3,
+      "symbol": "XRP",
+      "name": "XRP",
+      "image": "https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png",
+      "current_price": 2.47,
+      "market_cap": 8955249506,
+      "volume_24h": 143269581355,
+      "price_change_1h": 1.0,
+      "price_change_24h": 10.0,
+      "price_change_7d": 8.1,
+      "sparkline": "path_to_sparkline"
+    },
+    {
+      "id": "tether",
+      "rank": 4,
+      "symbol": "USDT",
+      "name": "Tether",
+      "image": "https://assets.coingecko.com/coins/images/325/large/Tether.png",
+      "current_price": 0.9997,
+      "market_cap": 108189343344,
+      "volume_24h": 142458850104,
+      "price_change_1h": 0.0,
+      "price_change_24h": 0.0,
+      "price_change_7d": 0.1,
+      "sparkline": "path_to_sparkline"
+    },
+    {
+      "id": "bnb",
+      "rank": 5,
+      "symbol": "BNB",
+      "name": "BNB",
+      "image": "https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png",
+      "current_price": 587.04,
+      "market_cap": 1183261483,
+      "volume_24h": 85666353575,
+      "price_change_1h": 1.1,
+      "price_change_24h": 6.1,
+      "price_change_7d": -6.2,
+      "sparkline": "path_to_sparkline"
+    },
+    {
+      "id": "solana",
+      "rank": 6,
+      "symbol": "SOL",
+      "name": "Solana",
+      "image": "https://assets.coingecko.com/coins/images/4128/large/solana.png",
+      "current_price": 143.68,
+      "market_cap": 8503117863,
+      "volume_24h": 73041268639,
+      "price_change_1h": 0.6,
+      "price_change_24h": 8.1,
+      "price_change_7d": 1.2,
+      "sparkline": "path_to_sparkline"
+    },
+    {
+      "id": "usdc",
+      "rank": 7,
+      "symbol": "USDC",
+      "name": "USDC",
+      "image": "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png",
+      "current_price": 0.9998,
+      "market_cap": 16096202966,
+      "volume_24h": 56436909430,
+      "price_change_1h": 0.0,
+      "price_change_24h": 0.0,
+      "price_change_7d": 0.0,
+      "sparkline": "path_to_sparkline"
+    },
+    {
+      "id": "cardano",
+      "rank": 8,
+      "symbol": "ADA",
+      "name": "Cardano",
+      "image": "https://assets.coingecko.com/coins/images/975/large/cardano.png",
+      "current_price": 0.9456,
+      "market_cap": 4630241343,
+      "volume_24h": 34013741272,
+      "price_change_1h": 1.9,
+      "price_change_24h": 20.4,
+      "price_change_7d": 38.6,
+      "sparkline": "path_to_sparkline"
+    },
+    {
+      "id": "dogecoin",
+      "rank": 9,
+      "symbol": "DOGE",
+      "name": "Dogecoin",
+      "image": "https://assets.coingecko.com/coins/images/5/large/dogecoin.png",
+      "current_price": 0.2001,
+      "market_cap": 2199186430,
+      "volume_24h": 29628219274,
+      "price_change_1h": 1.4,
+      "price_change_24h": 5.5,
+      "price_change_7d": -4.1,
+      "sparkline": "path_to_sparkline"
+    },
+    {
+      "id": "tron",
+      "rank": 10,
+      "symbol": "TRX",
+      "name": "TRON",
+      "image": "https://assets.coingecko.com/coins/images/1094/large/tron-logo.png",
+      "current_price": 0.2441,
+      "market_cap": 1299669821,
+      "volume_24h": 20995576222,
+      "price_change_1h": 1.0,
+      "price_change_24h": 7.6,
+      "price_change_7d": 6.9,
+      "sparkline": "path_to_sparkline"
+    }
+  ],
+  "top_gainers": [
+    {
+      "id": "cardano",
+      "symbol": "ADA",
+      "name": "Cardano",
+      "price_change_percentage_24h": 38.6
+    },
+    {
+      "id": "xrp",
+      "symbol": "XRP",
+      "name": "XRP",
+      "price_change_percentage_24h": 10.0
+    },
+    {
+      "id": "tron",
+      "symbol": "TRX",
+      "name": "TRON",
+      "price_change_percentage_24h": 7.6
+    }
+  ],
+  "top_losers": [
+    {
+      "id": "ethereum",
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "price_change_percentage_24h": -12.0
+    },
+    {
+      "id": "bnb",
+      "symbol": "BNB",
+      "name": "BNB",
+      "price_change_percentage_24h": -6.2
+    },
+    {
+      "id": "dogecoin",
+      "symbol": "DOGE",
+      "name": "Dogecoin",
+      "price_change_percentage_24h": -4.1
+    }
+  ]
+}
